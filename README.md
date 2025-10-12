@@ -1,4 +1,6 @@
-## Class name: Database System\n Student: Dong-Jing Lee\n Professor: Yun-Cheng Tsai
+## Class name: Database System
+   Student: Dong-Jing Lee 
+   Professor: Yun-Cheng Tsai
 
 ### HW1
-#### Video Link:https://youtu.be/O6dqVMUvL7w
+#### Video Link:https: //youtu.be/O6dqVMUvL7w
