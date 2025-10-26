@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+{% block title %}Departments{% endblock %}
+{% block content %}
+    <h2>All Departments</h2>
+    <a href="{{ url_for('add_department') }}" class="btn btn-primary" style="margin-bottom: 20px;">Add New Department</a>
+    <table>
+        <thead>
+            <tr>
+                <th>Department Code</th>
+                <th>Department Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for dept in departments %}
+            <tr>
+                <td>{{ dept.department_code }}</td>
+                <td>{{ dept.department_name }}</td>
+                <td>
+                    <a href="{{ url_for('update_department', department_id=dept.department_id) }}" class="btn btn-secondary">Edit</a>
+                    <form action="{{ url_for('delete_department', department_id=dept.department_id) }}" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure?');">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

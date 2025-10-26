@@ -1,0 +1,138 @@
+{% extends 'layout.html' %}
+
+{% block title %}{{ 'Edit' if action == 'Edit' else 'Add' }} Employee{% endblock %}
+
+{% block content %}
+    <h2>
+        {% if action == 'Edit' %}
+            Edit Employee ({{ employee.employee_code }})
+        {% else %}
+            Add New Employee
+        {% endif %}
+    </h2>
+    <form method="post" id="employee-form">
+        
+        <div style="margin-bottom: 15px;">
+            <label for="first_name">First Name:</label><br>
+            <input type="text" id="first_name" name="first_name" value="{{ employee.first_name if employee else '' }}" required style="width: 100%; padding: 8px;">
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label for="last_name">Last Name:</label><br>
+            <input type="text" id="last_name" name="last_name" value="{{ employee.last_name if employee else '' }}" required style="width: 100%; padding: 8px;">
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+            <label for="email">Email:</label><br>
+            <input type="email" id="email" name="email" value="{{ employee.email if employee else '' }}" required style="width: 100%; padding: 8px;">
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label for="department_id">Department:</label><br>
+            <select id="department_id" name="department_id" required style="width: 100%; padding: 8px;">
+                <option value="">-- Select a Department --</option>
+                {% for dept in departments %}
+                    <option value="{{ dept.department_id }}" {% if employee and employee.department_id == dept.department_id %}selected{% endif %}>
+                        {{ dept.department_name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+            <label for="job_id">Job Title:</label><br>
+            <select id="job_id" name="job_id" required style="width: 100%; padding: 8px;" {% if not jobs %}disabled{% endif %}>
+                <option value="">-- Select a Job Title --</option>
+                {% if jobs %}
+                    {% for job in jobs %}
+                        <option value="{{ job.job_id }}" {% if employee and employee.job_id == job.job_id %}selected{% endif %}>
+                            {{ job.job_title }}
+                        </option>
+                    {% endfor %}
+                {% endif %}
+            </select>
+        </div>
+
+        <!-- Employee Code 輸入框 -->
+        <div id="employee-code-wrapper"
+            {% if action != 'Edit' %}
+                style="margin-bottom: 15px; display: none;"
+            {% else %}
+                style="margin-bottom: 15px;"
+            {% endif %}
+        >
+            <label for="employee_code">Employee Code:</label><br>
+            <input type="text" id="employee_code" name="employee_code" value="{{ employee.employee_code if employee else '' }}"
+                   required style="width: 100%; padding: 8px;"
+                   {% if action == 'Edit' %}readonly style="background-color: #e9ecef;"{% endif %}>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">{{ 'Update' if action == 'Edit' else 'Create' }} Employee</button>
+        <a href="{{ url_for('list_employees') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+
+    <!-- JavaScript 腳本 (只在 "Add" 模式下啟用) -->
+    {% if action != 'Edit' %}
+    <script>
+        // (這裡的 JS 腳本與上一版完全相同，保持不變)
+        document.addEventListener('DOMContentLoaded', function() {
+            const departmentSelect = document.getElementById('department_id');
+            const jobSelect = document.getElementById('job_id');
+            const employeeCodeWrapper = document.getElementById('employee-code-wrapper');
+            const employeeCodeInput = document.getElementById('employee_code');
+
+            // 監聽部門下拉選單的變動
+            departmentSelect.addEventListener('change', function() {
+                const departmentId = this.value;
+                
+                jobSelect.innerHTML = '<option value="">Loading...</option>';
+                jobSelect.disabled = true;
+                employeeCodeWrapper.style.display = 'none';
+                employeeCodeInput.value = '';
+
+                if (!departmentId) {
+                    jobSelect.innerHTML = '<option value="">-- Select a Department First --</option>';
+                    return;
+                }
+
+                fetch(`/api/jobs/${departmentId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        jobSelect.innerHTML = '<option value="">-- Select a Job Title --</option>';
+                        data.forEach(job => {
+                            const option = document.createElement('option');
+                            option.value = job.job_id;
+                            option.textContent = job.job_title;
+                            jobSelect.appendChild(option);
+});
+                        jobSelect.disabled = false;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching jobs:', error);
+                        jobSelect.innerHTML = '<option value="">Error loading jobs</option>';
+                    });
+            });
+
+            // 監聽職位下拉選單的變動
+            jobSelect.addEventListener('change', function() {
+                const jobId = this.value;
+                
+                if (!jobId) {
+                    employeeCodeWrapper.style.display = 'none';
+                    employeeCodeInput.value = '';
+                    return;
+                }
+
+                fetch(`/api/next_employee_code/${jobId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        employeeCodeInput.value = data.next_code;
+                        employeeCodeWrapper.style.display = 'block';
+                    })
+                    .catch(error => {
+                        console.error('Error fetching next employee code:', error);
+                    });
+            });
+        });
+    </script>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends 'layout.html' %}
+
+{% block title %}{{ action }} Job Title{% endblock %}
+
+{% block content %}
+    <h2>{{ action }} Job Title</h2>
+    <form method="post">
+        <div style="margin-bottom: 15px;">
+            <label for="department_id">Department:</label><br>
+            <select id="department_id" name="department_id" required style="width: 100%; padding: 8px;" {% if action == 'Edit' %}disabled{% endif %}>
+                <option value="">-- Select a Department --</option>
+                {% for dept in departments %}
+                    <option value="{{ dept.department_id }}" 
+                            {% if job and job.department_id == dept.department_id %}selected{% endif %}>
+                        {{ dept.department_name }} ({{ dept.department_code }})
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Job Code 輸入框的容器 -->
+        <div id="job-code-wrapper" 
+            {% if action == 'Add' %}
+                style="margin-bottom: 15px; display: none;"
+            {% else %}
+                style="margin-bottom: 15px;"
+            {% endif %}
+        >
+            <label for="job_code">Job Code (Editable):</label><br>
+            <input type="text" id="job_code" name="job_code" value="{{ job.job_code if job else '' }}" 
+                   required pattern="\d{2,4}" title="Please enter a 2 to 4 digit number"
+                   style="width: 100%; padding: 8px;"
+                   {% if action == 'Edit' %}readonly style="background-color: #e9ecef;"{% endif %}>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label for="job_title">Job Title:</label><br>
+            <input type="text" id="job_title" name="job_title" value="{{ job.job_title if job else '' }}" required style="width: 100%; padding: 8px;">
+        </div>
+        
+        <button type="submit" class="btn btn-primary">{{ action }}</button>
+        <a href="{{ url_for('list_jobs') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+
+    {% if action == 'Add' %}
+    <!-- JavaScript 腳本，只在 "Add" 模式下啟用 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const departmentSelect = document.getElementById('department_id');
+            const jobCodeWrapper = document.getElementById('job-code-wrapper');
+            const jobCodeInput = document.getElementById('job_code');
+
+            // 監聽部門下拉選單的變動
+            departmentSelect.addEventListener('change', function() {
+                const departmentId = this.value;
+
+                if (!departmentId) {
+                    jobCodeWrapper.style.display = 'none'; // 隱藏 Job Code 輸入框
+                    jobCodeInput.value = '';
+                    return;
+                }
+
+                // 使用 Fetch API 向後端請求建議的 Job Code
+                fetch(`/api/next_job_code/${departmentId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        jobCodeInput.value = data.next_code; // 填入建議的 Code
+                        jobCodeWrapper.style.display = 'block'; // 顯示 Job Code 輸入框
+                    })
+                    .catch(error => {
+                        console.error('Error fetching next job code:', error);
+                        alert('Could not fetch the next job code.');
+                    });
+            });
+        });
+    </script>
+    {% endif %}
+{% endblock %}

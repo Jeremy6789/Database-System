@@ -1,0 +1,23 @@
+{% extends 'layout.html' %}
+
+{% block title %}{{ action }} Department{% endblock %}
+
+{% block content %}
+    <h2>{{ action }} Department</h2>
+    <form method="post">
+        <div style="margin-bottom: 15px;">
+            <label for="department_code">Department Code (Editable):</label><br>
+            <input type="text" id="department_code" name="department_code" 
+                   value="{{ department.department_code if department else next_dept_code }}" 
+                   required pattern="\d{2,4}" title="Please enter a 2 to 4 digit number."
+                   style="width: 100%; padding: 8px;">
+                   <!-- 移除了 readonly 和 background-color -->
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label for="department_name">Department Name:</label><br>
+            <input type="text" id="department_name" name="department_name" value="{{ department.department_name if department else '' }}" required style="width: 100%; padding: 8px;">
+        </div>
+        <button type="submit" class="btn btn-primary">{{ action }}</button>
+        <a href="{{ url_for('list_departments') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+{% endblock %}

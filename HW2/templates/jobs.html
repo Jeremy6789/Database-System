@@ -1,0 +1,31 @@
+{% extends 'layout.html' %}
+{% block title %}Job Titles{% endblock %}
+{% block content %}
+    <h2>All Job Titles</h2>
+    <a href="{{ url_for('add_job') }}" class="btn btn-primary" style="margin-bottom: 20px;">Add New Job Title</a>
+    <table>
+        <thead>
+            <tr>
+                <th>Dept. Code</th>
+                <th>Job Code</th>
+                <th>Job Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for job in jobs %}
+            <tr>
+                <td>{{ job.department_code }}</td>
+                <td>{{ job.job_code }}</td>
+                <td>{{ job.job_title }}</td>
+                <td>
+                    <a href="{{ url_for('update_job', job_id=job.job_id) }}" class="btn btn-secondary">Edit</a>
+                    <form action="{{ url_for('delete_job', job_id=job.job_id) }}" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure?');">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

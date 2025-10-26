@@ -1,0 +1,37 @@
+<!-- templates/employees.html -->
+{% extends 'layout.html' %}
+
+{% block title %}Employee List{% endblock %}
+
+{% block content %}
+    <h2>All Employees</h2>
+    <a href="{{ url_for('add_employee') }}" class="btn btn-primary" style="margin-bottom: 20px;">Add New Employee</a>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Employee Code</th>
+                <th>Name</th>
+                <th>Dept. Code</th>
+                <th>Job Code</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for employee in employees %}
+            <tr>
+                <td>{{ employee.employee_code }}</td>
+                <td>{{ employee.employee_name }}</td>
+                <td>{{ employee.department_code }}</td>
+                <td>{{ employee.job_code }}</td>
+                <td>
+                    <a href="{{ url_for('update_employee', employee_id=employee.employee_id) }}" class="btn btn-secondary">Edit</a>
+                    <form action="{{ url_for('delete_employee', employee_id=employee.employee_id) }}" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this employee?');">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
