@@ -1,19 +1,27 @@
 import json
 import re
+import os
 from flask import Flask, render_template, request, redirect, url_for, flash
 from pymongo import MongoClient
 from bson import json_util # 匯入 bson 工具，用來處理 MongoDB 的 ObjectId 轉換
 from bson.objectid import ObjectId
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # --- Flask App 初始化 ---
 app = Flask(__name__)
 # 設定一個 secret_key 來使用 flash 訊息功能，這是一串隨機的密鑰
-app.secret_key = "your_super_secret_key" 
+app.secret_key = os.getenv("SECRET_KEY", "a_default_secret_key_if_not_set")
 
 # --- MongoDB 連線設定 ---
 # 連接到你本地的 MongoDB 實例 (localhost:27017)
-MONGO_URI = "mongodb://localhost:27017/"
+MONGO_URI = os.getenv("MONGO_URI") # <--- **最重要的修改**
+if not MONGO_URI:
+    raise Exception("MONGO_URI environment variable not set!")
+
 client = MongoClient(MONGO_URI)
+
 
 # 選擇你的資料庫和集合
 # 如果它們不存在，MongoDB 會在第一次新增資料時自動建立它們
