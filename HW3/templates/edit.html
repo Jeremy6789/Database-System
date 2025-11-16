@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <title>Edit Employee</title>
+    <!-- 複製 index.html 的樣式，讓介面風格統一 -->
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; margin: 2em; background-color: #f9f9f9; color: #333; }
+        .form-container { max-width: 600px; margin: 2em auto; background-color: #fff; border: 1px solid #ddd; padding: 2em; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { border-bottom: 2px solid #eee; padding-bottom: 0.5em; color: #0056b3; }
+        .form-group { margin-bottom: 1.5em; }
+        label { display: block; margin-bottom: 0.5em; font-weight: 600; }
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box; /* 確保 padding 不會影響寬度 */
+        }
+        .form-actions { text-align: right; margin-top: 2em; }
+        button { padding: 10px 20px; background-color: #007bff; color: white; border: none; cursor: pointer; border-radius: 4px; font-size: 1em; }
+        button:hover { background-color: #0056b3; }
+        a.cancel-btn { padding: 10px 20px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 4px; margin-right: 1em; }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Edit Employee: {{ employee.name }}</h1>
+        
+        <!-- 表單的 action 會指向我們剛剛建立的 update_employee 路由 -->
+        <!-- 我們需要傳遞員工的 _id，這樣後端才知道要更新哪一筆資料 -->
+        <form action="{{ url_for('update_employee', id=employee._id) }}" method="post">
+            <div class="form-group">
+                <label for="employee_id">Employee ID</label>
+                <input type="text" id="employee_id" name="employee_id" value="{{ employee.employee_id }}" required>
+            </div>
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" value="{{ employee.name }}" required>
+            </div>
+            <div class="form-group">
+                <label for="department">Department</label>
+                <input type="text" id="department" name="department" value="{{ employee.department }}" required>
+            </div>
+            <div class="form-group">
+                <label for="position">Position</label>
+                <input type="text" id="position" name="position" value="{{ employee.position }}" required>
+            </div>
+            <div class="form-group">
+                <label for="age">Age</label>
+                <!-- 使用 get() 方法，如果 age 不存在，就顯示空值，避免出錯 -->
+                <input type="number" id="age" name="age" value="{{ employee.get('age', '') }}">
+            </div>
+            <div class="form-group">
+                <label for="status">Status</label>
+                <select id="status" name="status">
+                    <!-- 使用 if 判斷式來預先選中目前的狀態 -->
+                    <option value="active" {% if employee.get('status') == 'active' %}selected{% endif %}>Active</option>
+                    <option value="resigned" {% if employee.get('status') == 'resigned' %}selected{% endif %}>Resigned</option>
+                    <option value="promoted" {% if employee.get('status') == 'promoted' %}selected{% endif %}>Promoted</option>
+                </select>
+            </div>
+            <div class="form-actions">
+                <a href="{{ url_for('index') }}" class="cancel-btn">Cancel</a>
+                <button type="submit">Update Employee</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
