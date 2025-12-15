@@ -1,0 +1,71 @@
+// add
+
+[
+  {
+    "employee_id": "ENG001",
+    "name": "Alice Johnson",
+    "department": "Engineering",
+    "position": "Senior Developer",
+    "age": 32,
+    "status": "active"
+  },
+  {
+    "employee_id": "ENG002",
+    "name": "Bob Williams",
+    "department": "Engineering",
+    "position": "Junior Developer",
+    "age": 25,
+    "status": "active"
+  },
+  {
+    "employee_id": "MKT001",
+    "name": "Carol Davis",
+    "department": "Marketing",
+    "position": "Marketing Manager",
+    "age": 38,
+    "status": "active"
+  },
+  {
+    "employee_id": "HR001",
+    "name": "David Miller",
+    "department": "Human Resources",
+    "position": "HR Specialist",
+    "age": 29,
+    "status": "active"
+  },
+  {
+    "employee_id": "SALE001",
+    "name": "Eve Brown",
+    "department": "Sales",
+    "position": "Sales Executive",
+    "age": 35,
+    "status": "promoted"
+  },
+  {
+    "employee_id": "ADM001",
+    "name": "Frank White",
+    "department": "Admin",
+    "position": "Office Assistant",
+    "age": 45,
+    "status": "resigned"
+  }
+]
+
+
+//update
+
+{
+  "department": "Engineering"
+}
+
+{
+  "status": "promoted",
+  "location": "Taipei"
+}
+
+
+//delete
+
+{
+  "status": "resigned"
+}
